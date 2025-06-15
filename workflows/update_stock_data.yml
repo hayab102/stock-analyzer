@@ -1,3 +1,6 @@
+on:
+  workflow_dispatch:
+
 name: 更新: 銘柄リスト + 株価データ取得
 
 on:
