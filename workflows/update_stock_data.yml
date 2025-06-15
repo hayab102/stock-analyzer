@@ -2,8 +2,8 @@ name: 更新: 銘柄リスト + 株価データ取得
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # 毎日22時（日本時間）に自動実行
-  workflow_dispatch:       # 手動実行もOKにする
+    - cron: '0 13 * * *'  # 毎日22時（日本時間）
+  workflow_dispatch:
 
 jobs:
   update_stocks:
@@ -28,7 +28,6 @@ jobs:
 
     - name: 株価データ取得＆指標計算
       run: |
-        pip install pandas yfinance
         python stock_csv_generator.py
 
     - name: ファイル一覧を表示
