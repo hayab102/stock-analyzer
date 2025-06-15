@@ -1,12 +1,9 @@
-on:
-  workflow_dispatch:
-
 name: 更新: 銘柄リスト + 株価データ取得
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # UTC13時＝日本時間22時
-  workflow_dispatch:
+    - cron: '0 13 * * *'  # 毎日22時（日本時間）に自動実行
+  workflow_dispatch:       # 手動実行もOKにする
 
 jobs:
   update_stocks:
@@ -37,3 +34,7 @@ jobs:
     - name: ファイル一覧を表示
       run: |
         ls data | head -n 10
+
+git add .github/workflows/update_stock_data.yml
+git commit -m "Fix: enable manual run (workflow_dispatch)"
+git push origin main  # ※"main"はあなたのブランチ名に応じて読み替えてください
