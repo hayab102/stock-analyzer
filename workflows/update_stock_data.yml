@@ -34,7 +34,3 @@ jobs:
     - name: ファイル一覧を表示
       run: |
         ls data | head -n 10
-
-git add .github/workflows/update_stock_data.yml
-git commit -m "Fix: enable manual run (workflow_dispatch)"
-git push origin main  # ※"main"はあなたのブランチ名に応じて読み替えてください
