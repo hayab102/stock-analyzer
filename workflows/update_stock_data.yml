@@ -1,9 +1,9 @@
 name: 更新: 銘柄リスト + 株価データ取得
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 13 * * *'  # 毎日22時（日本時間）
-  workflow_dispatch:
 
 jobs:
   update_stocks:
