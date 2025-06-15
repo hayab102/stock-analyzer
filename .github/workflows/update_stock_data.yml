@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: リポジトリをチェックアウト
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Python セットアップ
         uses: actions/setup-python@v4
@@ -33,4 +32,4 @@ jobs:
 
       - name: ファイル一覧を表示
         run: |
-          ls -lh data | head -n 10
+          ls data | head -n 10
