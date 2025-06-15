@@ -1,10 +1,36 @@
-name: "テスト用ワークフロー"
+name: "更新: 銘柄リストと株価データ取得"
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 手動実行用
+  schedule:
+    - cron: '0 13 * * *'  # 毎日22時（日本時間）
 
 jobs:
-  test:
+  update_stocks:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "ワークフロー実行成功"
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Pythonセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: ライブラリインストール
+        run: |
+          pip install pandas yfinance openpyxl
+
+      - name: 銘柄一覧取得
+        run: |
+          python get_all_tickers.py
+          wc -l ticker_list.csv || true  # ファイルなければエラーにしない
+
+      - name: 株価データ取得＆指標計算
+        run: |
+          python stock_csv_generator.py
+
+      - name: ファイル一覧を表示
+        run: |
+          ls -lh data | head -n 20 || echo "dataディレクトリが存在しないか空です"
