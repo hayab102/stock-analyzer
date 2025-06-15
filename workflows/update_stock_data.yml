@@ -1,0 +1,36 @@
+name: 更新: 銘柄リスト + 株価データ取得
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # UTC13時＝日本時間22時
+  workflow_dispatch:
+
+jobs:
+  update_stocks:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Python セットアップ
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: ライブラリインストール
+      run: |
+        pip install pandas yfinance openpyxl
+
+    - name: 銘柄一覧取得
+      run: |
+        python get_all_tickers.py
+        wc -l ticker_list.csv
+
+    - name: 株価データ取得＆指標計算
+      run: |
+        pip install pandas yfinance
+        python stock_csv_generator.py
+
+    - name: ファイル一覧を表示
+      run: |
+        ls data | head -n 10
