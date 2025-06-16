@@ -1,8 +1,10 @@
 # get_all_tickers.py
 import pandas as pd
 
-# JPX公式「東証上場銘柄一覧」ExcelファイルURL :contentReference[oaicite:0]{index=0}
 url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+df = pd.read_excel(url, skiprows=1)
+print(df.columns)  # ← ここで中身を確認
+
 
 df = pd.read_excel(url, skiprows=1, usecols=['コード'])
 df = df.dropna(subset=['コード'])
