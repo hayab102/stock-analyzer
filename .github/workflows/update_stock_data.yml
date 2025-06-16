@@ -20,7 +20,7 @@ jobs:
 
       - name: ライブラリインストール
         run: |
-          pip install pandas yfinance openpyxl
+          pip install pandas yfinance openpyxl xlrd
 
       - name: 銘柄一覧取得
         run: |
