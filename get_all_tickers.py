@@ -31,5 +31,5 @@ df_out['コード'] = df_out['コード'].astype(str).str.zfill(4)
 df_out = df_out.sort_values('コード').reset_index(drop=True)
 
 # ⑧ 保存
-df_out.to_csv("jpx_tickers_full.csv", index=False, encoding="utf-8-sig")
+df_out.to_csv("ticker_list.csv", index=False, encoding="utf-8-sig")
 print(f"✅ 完了: {len(df_out)} 件 → jpx_tickers_full.csv")
