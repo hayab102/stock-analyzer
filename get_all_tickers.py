@@ -35,9 +35,17 @@ if missing:
     raise ValueError(f"以下の列が見つかりません: {missing}")
 
 # ⑦ 抽出・整形・保存
-df_out = df[expected_columns].copy()
-df_out['コード'] = df_out['コード'].astype(str).str.zfill(4)
-df_out = df_out.sort_values('コード').reset_index(drop=True)
-df_out.to_csv("ticker_list.csv", index=False, encoding="utf-8-sig")
 
+df_out = df_out.rename(columns={
+    'コード': 'Code',
+    '銘柄名': 'Name',
+    '市場・商品区分': 'Market',
+    '33業種区分': 'Sector33',
+    '17業種区分': 'Sector17',
+    '規模区分': 'Scale',
+})
+
+# ⑨ ソート・保存
+df_out = df_out.sort_values('Code').reset_index(drop=True)
+df_out.to_csv("ticker_list.csv", index=False, encoding="utf-8-sig")
 print(f"✅ 完了: {len(df_out)} 件 → ticker_list.csv を生成")
