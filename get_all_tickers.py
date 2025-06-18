@@ -34,8 +34,11 @@ if missing:
     print("列名一覧:", df.columns.tolist())
     raise ValueError(f"以下の列が見つかりません: {missing}")
 
-# ⑦ 抽出・整形・保存
+# ⑥ 整形：使う列のみ抽出し、保存
+df_out = df[expected_columns].copy()
+df_out['コード'] = df_out['コード'].astype(str).str.zfill(4)
 
+# ⑦ 列名変換: 日本語 → 英語
 df_out = df_out.rename(columns={
     'コード': 'Code',
     '銘柄名': 'Name',
@@ -45,7 +48,8 @@ df_out = df_out.rename(columns={
     '規模区分': 'Scale',
 })
 
-# ⑨ ソート・保存
+# ⑧ ソート・保存
 df_out = df_out.sort_values('Code').reset_index(drop=True)
 df_out.to_csv("ticker_list.csv", index=False, encoding="utf-8-sig")
 print(f"✅ 完了: {len(df_out)} 件 → ticker_list.csv を生成")
+
