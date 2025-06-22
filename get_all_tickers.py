@@ -2,39 +2,42 @@ import pandas as pd
 import requests
 from io import BytesIO
 
-# ① データ取得
+# データ取得
 url = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
 res = requests.get(url)
 res.raise_for_status()
 
-# ② Excel読み込み → headerは1行目、データは2行目以降
-df = pd.read_excel(BytesIO(res.content), header=1)
+# Excel読み込み（ヘッダー不定なので全て読み込む）
+raw_df = pd.read_excel(BytesIO(res.content), header=None)
 
-# ③ 列名整形（不要な空白など削除）
+# ヘッダー行を自動検出
+target_cols = ['コード', '銘柄名', '市場・商品区分', '33業種区分', '17業種区分', '規模区分']
+header_row_index = None
+
+for i in range(len(raw_df)):
+    row = raw_df.iloc[i].astype(str).str.strip().str.replace('　', '').str.replace(' ', '')
+    if all(col in row.values for col in target_cols):
+        header_row_index = i
+        break
+
+if header_row_index is None:
+    raise ValueError("必要な列名を含むヘッダー行が見つかりません")
+
+# ヘッダー行から読み直し
+df = pd.read_excel(BytesIO(res.content), header=header_row_index)
+
+# 列名クリーンアップ
 df.columns = df.columns.map(lambda x: str(x).strip().replace("　", "").replace(" ", ""))
-print("列名一覧:", df.columns.tolist())
 
-# ④ 必要列があるか確認
-expected_columns = ['日付', 'コード', '銘柄名', '市場・商品区分', '33業種区分', '17業種区分', '規模区分']
-missing = [col for col in expected_columns if col not in df.columns]
+# 必要列チェック
+expected = ['日付', 'コード', '銘柄名', '市場・商品区分', '33業種区分', '17業種区分', '規模区分']
+missing = [col for col in expected if col not in df.columns]
 if missing:
     raise ValueError(f"以下の列が見つかりません: {missing}")
 
-# ⑤ 必要な列を抽出
-df_out = df[expected_columns].copy()
+# 整形・保存
+df_out = df[expected].copy()
 df_out['コード'] = df_out['コード'].astype(str).str.zfill(4)
 df_out = df_out.sort_values('コード').reset_index(drop=True)
-
-# ⑥ 列名を英語に変換
-df_out = df_out.rename(columns={
-    'コード': 'Code',
-    '銘柄名': 'Name',
-    '市場・商品区分': 'Market',
-    '33業種区分': 'Sector33',
-    '17業種区分': 'Sector17',
-    '規模区分': 'Scale'
-})
-
-# ⑦ 保存
-df_out.to_csv("ticker_list.csv", index=False, encoding="utf-8-sig")
-print(f"✅ 完了: {len(df_out)} 件 → ticker_list.csv")
+df_out.to_csv("jpx_tickers_full.csv", index=False, encoding="utf-8-sig")
+print(f"✅ 完了: {len(df_out)} 件 → jpx_tickers_full.csv")
