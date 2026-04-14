@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: リポジトリをチェックアウト
         uses: actions/checkout@v3
+        with:
+          persist-credentials: true
 
       - name: Pythonセットアップ
         uses: actions/setup-python@v4
@@ -45,7 +47,8 @@ jobs:
       - name: ファイル一覧を表示
         run: |
           ls -lh
-                - name: 生成CSVをリポジトリへ反映
+
+      - name: 生成CSVをリポジトリへ反映
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
