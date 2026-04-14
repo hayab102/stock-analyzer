@@ -1,9 +1,9 @@
 name: "更新: 銘柄リストと株価データ取得"
 
 on:
-  workflow_dispatch:  # 手動実行用
+  workflow_dispatch:
   schedule:
-    - cron: '0 13 * * *'  # 毎日22時（日本時間）
+    - cron: '0 13 * * *'
 
 jobs:
   update_stocks:
@@ -20,17 +20,28 @@ jobs:
 
       - name: ライブラリインストール
         run: |
-          pip install pandas yfinance openpyxl xlrd
+          pip install pandas yfinance openpyxl xlrd requests
 
-      - name: 銘柄一覧取得
+      - name: JPX銘柄マスター取得
         run: |
           python get_all_tickers.py
-          wc -l ticker_list.csv || true  # ファイルなければエラーにしない
+          ls -lh jpx_tickers_full.csv
+          wc -l jpx_tickers_full.csv
 
-      - name: 株価データ取得＆指標計算
+      - name: 検索用CSV生成
+        run: |
+          python build_search_catalog.py
+          ls -lh search_catalog.csv
+          wc -l search_catalog.csv
+          head -n 10 search_catalog.csv
+
+      - name: 既存の銘柄一覧CSV生成
         run: |
           python stock_csv_generator.py
+          ls -lh ticker_list.csv
+          wc -l ticker_list.csv
+          head -n 10 ticker_list.csv
 
       - name: ファイル一覧を表示
         run: |
-          ls -lh data | head -n 20 || echo "dataディレクトリが存在しないか空です"
+          ls -lh
