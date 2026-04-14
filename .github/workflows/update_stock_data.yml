@@ -45,3 +45,10 @@ jobs:
       - name: ファイル一覧を表示
         run: |
           ls -lh
+                - name: 生成CSVをリポジトリへ反映
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add search_catalog.csv
+          git diff --cached --quiet || git commit -m "Update search_catalog.csv"
+          git push
